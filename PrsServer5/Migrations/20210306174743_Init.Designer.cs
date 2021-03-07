@@ -9,7 +9,7 @@ using PrsServer5.Models;
 namespace PrsServer5.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210306134900_Init")]
+    [Migration("20210306174743_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
