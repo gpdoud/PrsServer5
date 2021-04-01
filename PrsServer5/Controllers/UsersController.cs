@@ -21,8 +21,8 @@ namespace PrsServer5.Controllers {
         [HttpGet("login/{username}/{password}")]
         public async Task<ActionResult<User>> Login(string username, string password) {
             var user = await _context.Users
-                .SingleOrDefaultAsync(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)
-                                        && u.Password.Equals(password, StringComparison.Ordinal));
+                .SingleOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower())
+                                        && u.Password.Equals(password));
             return (user == null)
                 ? NotFound()
                 : user;
