@@ -17,8 +17,8 @@ namespace PrsServer5.Controllers {
             _context = context;
         }
 
-        // GET: api/Users/login/{username}/{password}
-        [HttpGet("login/{username}/{password}")]
+        // GET: api/Users/{username}/{password}
+        [HttpGet("{username}/{password}")]
         public async Task<ActionResult<User>> Login(string username, string password) {
             var user = await _context.Users
                 .SingleOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower())
