@@ -20,13 +20,19 @@ namespace PrsServer5.Controllers {
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequests() {
-            return await _context.Requests.ToListAsync();
+            return await _context.Requests
+                                    .Include(x => x.User)
+                                    .ToListAsync();
         }
 
         // GET: api/Requests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id) {
-            var request = await _context.Requests.FindAsync(id);
+            var request = await _context.Requests
+                                    .Include(x => x.User)
+                                    .Include(x => x.Requestlines)
+                                    .ThenInclude(x => x.Product)
+                                    .SingleOrDefaultAsync(x => x.Id == id);
 
             if (request == null) {
                 return NotFound();
@@ -39,10 +45,35 @@ namespace PrsServer5.Controllers {
         [HttpGet("reviewed/{userid}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequestsInReview(int userid) {
             return await _context.Requests
+                                    .Include(r => r.User)
                                     .Where(r => r.Status == Models.Request.StatusReview
                                              && r.UserId != userid)
                                     .ToListAsync();
         }
+
+        // PUT: api/Requests/Review
+        [HttpPut("review")]
+        public async Task<IActionResult> SetRequestToReview(Request request) {
+            request.Status = request.Total <= 50m
+                ? PrsServer5.Models.Request.StatusApproved
+                : PrsServer5.Models.Request.StatusReview;
+            return await PutRequest(request.Id, request);
+        }
+
+        // PUT: api/Requests/Approve
+        [HttpPut("approve")]
+        public async Task<IActionResult> SetRequestToApprove(Request request) {
+            request.Status = PrsServer5.Models.Request.StatusApproved;
+            return await PutRequest(request.Id, request);
+        }
+
+        // PUT: api/Requests/Reject
+        [HttpPut("reject")]
+        public async Task<IActionResult> SetRequestToReject(Request request) {
+            request.Status = PrsServer5.Models.Request.StatusRejected;
+            return await PutRequest(request.Id, request);
+        }
+
         // PUT: api/Requests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
