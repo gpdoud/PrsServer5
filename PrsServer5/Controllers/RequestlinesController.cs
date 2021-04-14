@@ -49,6 +49,11 @@ namespace PrsServer5.Controllers {
 
             return requestline;
         }
+        // PUT: api/Requestlines/5
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateRequestline(int id, Requestline requestline) {
+            return await PutRequestline(id, requestline);
+        }
 
         // PUT: api/Requestlines/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -83,6 +88,11 @@ namespace PrsServer5.Controllers {
             await RecalculateRequestTotal(requestline.RequestId);
 
             return CreatedAtAction("GetRequestline", new { id = requestline.Id }, requestline);
+        }
+        // DELETE: api/Requestlines/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveRequestline(int id) {
+            return await DeleteRequestline(id);
         }
 
         // DELETE: api/Requestlines/5

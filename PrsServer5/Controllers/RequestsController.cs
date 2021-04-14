@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using PrsServer5.Models;
 
 namespace PrsServer5.Controllers {
@@ -34,7 +36,7 @@ namespace PrsServer5.Controllers {
                                     .ThenInclude(x => x.Product)
                                     .SingleOrDefaultAsync(x => x.Id == id);
 
-            if (request == null) {
+            if(request == null) {
                 return NotFound();
             }
 
@@ -51,6 +53,12 @@ namespace PrsServer5.Controllers {
                                     .ToListAsync();
         }
 
+        // POST: api/requests/review
+        [HttpPost("review")]
+        public async Task<IActionResult> SetRequestToReviewPost(Request request) {
+            return await SetRequestToReview(request);
+        }
+
         // PUT: api/Requests/Review
         [HttpPut("review")]
         public async Task<IActionResult> SetRequestToReview(Request request) {
@@ -60,12 +68,25 @@ namespace PrsServer5.Controllers {
             return await PutRequest(request.Id, request);
         }
 
+        // POST: api/requests/review
+        [HttpPost("approve")]
+        public async Task<IActionResult> SetRequestToApprovePost(Request request) {
+            return await SetRequestToApprove(request);
+        }
+
         // PUT: api/Requests/Approve
         [HttpPut("approve")]
         public async Task<IActionResult> SetRequestToApprove(Request request) {
             request.Status = PrsServer5.Models.Request.StatusApproved;
             return await PutRequest(request.Id, request);
         }
+
+        // POST: api/requests/review
+        [HttpPost("reject")]
+        public async Task<IActionResult> SetRequestToRejectPost(Request request) {
+            return await SetRequestToReject(request);
+        }
+
 
         // PUT: api/Requests/Reject
         [HttpPut("reject")]
@@ -74,11 +95,17 @@ namespace PrsServer5.Controllers {
             return await PutRequest(request.Id, request);
         }
 
+        // POST: api/requests/update/5
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateReqeust(int id, Request request) {
+            return await PutRequest(id, request);
+        }
+
         // PUT: api/Requests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRequest(int id, Request request) {
-            if (id != request.Id) {
+            if(id != request.Id) {
                 return BadRequest();
             }
 
@@ -86,8 +113,8 @@ namespace PrsServer5.Controllers {
 
             try {
                 await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException) {
-                if (!RequestExists(id)) {
+            } catch(DbUpdateConcurrencyException) {
+                if(!RequestExists(id)) {
                     return NotFound();
                 } else {
                     throw;
@@ -107,11 +134,17 @@ namespace PrsServer5.Controllers {
             return CreatedAtAction("GetRequest", new { id = request.Id }, request);
         }
 
+        // POST: api/requests/delete/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveRequest(int id) {
+            return await DeleteRequest(id);
+        }
+
         // DELETE: api/Requests/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id) {
             var request = await _context.Requests.FindAsync(id);
-            if (request == null) {
+            if(request == null) {
                 return NotFound();
             }
 

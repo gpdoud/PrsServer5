@@ -40,6 +40,12 @@ namespace PrsServer5.Controllers {
 
             return product;
         }
+        // PUT: api/products/update/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, Product product) {
+            return await PutProduct(id, product);
+        }
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -72,6 +78,12 @@ namespace PrsServer5.Controllers {
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+        }
+
+        // DELETE: api/Products/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveProduct(int id) {
+            return await DeleteProduct(id);
         }
 
         // DELETE: api/Products/5

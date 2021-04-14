@@ -29,8 +29,12 @@ namespace PrsServer5 {
             //services.AddSwaggerGen(c => {
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PrsServer5", Version = "v1" });
             //});
+            var DbKey = "ProdDb";
+#if DEBUG
+            DbKey = "AppDb";
+#endif
             services.AddDbContext<AppDbContext>(x => {
-                x.UseSqlServer(Configuration.GetConnectionString("AppDb"));
+                x.UseSqlServer(Configuration.GetConnectionString(DbKey));
             });
             services.AddCors();
         }

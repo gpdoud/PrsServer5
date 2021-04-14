@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using PrsServer5.Models;
 
 namespace PrsServer5.Controllers {
@@ -39,18 +41,24 @@ namespace PrsServer5.Controllers {
         public async Task<ActionResult<User>> GetUser(int id) {
             var user = await _context.Users.FindAsync(id);
 
-            if (user == null) {
+            if(user == null) {
                 return NotFound();
             }
 
             return user;
         }
 
+        // POST: api/users/update/5
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateUser(int id, User user) {
+            return await PutUser(id, user);
+        }
+
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user) {
-            if (id != user.Id) {
+            if(id != user.Id) {
                 return BadRequest();
             }
 
@@ -58,8 +66,8 @@ namespace PrsServer5.Controllers {
 
             try {
                 await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException) {
-                if (!UserExists(id)) {
+            } catch(DbUpdateConcurrencyException) {
+                if(!UserExists(id)) {
                     return NotFound();
                 } else {
                     throw;
@@ -79,11 +87,17 @@ namespace PrsServer5.Controllers {
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
+        // REMOVE: api/Users/delete/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveUser(int id) {
+            return await DeleteUser(id);
+        }
+
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id) {
             var user = await _context.Users.FindAsync(id);
-            if (user == null) {
+            if(user == null) {
                 return NotFound();
             }
 

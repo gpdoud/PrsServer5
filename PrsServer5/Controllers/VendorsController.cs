@@ -45,8 +45,10 @@ namespace PrsServer5.Controllers {
                     polines[x.ProductId] = new Requestline {
                         Id = x.Requestlineid, RequestId = x.RequestId,
                         ProductId = x.ProductId, Quantity = x.RequestlineQuantity,
-                        Product = new Product { Price = x.ProductPrice, Description = x.ProductDescription,
-                                                PartNbr = x.ProductPartNbr}
+                        Product = new Product {
+                            Price = x.ProductPrice, Description = x.ProductDescription,
+                            PartNbr = x.ProductPartNbr
+                        }
                     };
                     continue;
                 }
@@ -76,6 +78,12 @@ namespace PrsServer5.Controllers {
             }
 
             return vendor;
+        }
+
+        // POST: api/vendors/update/5
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateVendor(int id, Vendor vendor) {
+            return await PutVendor(id, vendor);
         }
 
         // PUT: api/Vendors/5
@@ -109,6 +117,12 @@ namespace PrsServer5.Controllers {
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetVendor", new { id = vendor.Id }, vendor);
+        }
+
+        // POST: api/vendors/delete/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveVendor(int id) {
+            return await DeleteVendor(id);
         }
 
         // DELETE: api/Vendors/5
