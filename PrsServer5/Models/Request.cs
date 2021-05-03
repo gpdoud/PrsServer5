@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +28,8 @@ namespace PrsServer5.Models {
 
         public int UserId { get; set; }
         public virtual User User { get; set; }
+
+        public IEnumerable<Requestline> Requestlines { get; set; }
 
         public Request() {
         }

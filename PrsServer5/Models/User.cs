@@ -8,7 +8,7 @@ namespace PrsServer5.Models {
         public int Id { get; set; }
         [StringLength(30), Required]
         public string Username { get; set; }
-        [StringLength(30), Required]
+        [StringLength(100), Required]
         public string Password { get; set; }
         [StringLength(30), Required]
         public string Firstname { get; set; }

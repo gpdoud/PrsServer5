@@ -26,11 +26,9 @@ namespace PrsServer5 {
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
-            //services.AddSwaggerGen(c => {
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PrsServer5", Version = "v1" });
-            //});
+
             services.AddDbContext<AppDbContext>(x => {
-                x.UseSqlServer(Configuration.GetConnectionString("AppDb"));
+                x.UseSqlServer(Configuration.GetConnectionString("PrsDb"));
             });
             services.AddCors();
         }
@@ -54,6 +52,10 @@ namespace PrsServer5 {
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
+
+            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            scope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
+
         }
     }
 }

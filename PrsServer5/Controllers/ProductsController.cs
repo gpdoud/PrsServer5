@@ -2,69 +2,67 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using PrsServer5.Models;
 
-namespace PrsServer5.Controllers
-{
+namespace PrsServer5.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
-    {
+    public class ProductsController : ControllerBase {
         private readonly AppDbContext _context;
 
-        public ProductsController(AppDbContext context)
-        {
+        public ProductsController(AppDbContext context) {
             _context = context;
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        {
-            return await _context.Products.ToListAsync();
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts() {
+            return await _context.Products
+                                .Include(x => x.Vendor)
+                                .ToListAsync();
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
+        public async Task<ActionResult<Product>> GetProduct(int id) {
+            var product = await _context.Products
+                                .Include(x => x.Vendor)
+                                .SingleOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
-            {
+            if(product == null) {
                 return NotFound();
             }
 
             return product;
         }
+        // PUT: api/products/update/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, Product product) {
+            return await PutProduct(id, product);
+        }
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
-        {
-            if (id != product.Id)
-            {
+        public async Task<IActionResult> PutProduct(int id, Product product) {
+            if(id != product.Id) {
                 return BadRequest();
             }
 
             _context.Entry(product).State = EntityState.Modified;
 
-            try
-            {
+            try {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
+            } catch(DbUpdateConcurrencyException) {
+                if(!ProductExists(id)) {
                     return NotFound();
-                }
-                else
-                {
+                } else {
                     throw;
                 }
             }
@@ -75,8 +73,7 @@ namespace PrsServer5.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
-        {
+        public async Task<ActionResult<Product>> PostProduct(Product product) {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
@@ -84,12 +81,16 @@ namespace PrsServer5.Controllers
         }
 
         // DELETE: api/Products/5
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> RemoveProduct(int id) {
+            return await DeleteProduct(id);
+        }
+
+        // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
-        {
+        public async Task<IActionResult> DeleteProduct(int id) {
             var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
+            if(product == null) {
                 return NotFound();
             }
 
@@ -99,8 +100,7 @@ namespace PrsServer5.Controllers
             return NoContent();
         }
 
-        private bool ProductExists(int id)
-        {
+        private bool ProductExists(int id) {
             return _context.Products.Any(e => e.Id == id);
         }
     }
