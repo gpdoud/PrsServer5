@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using PrsServer5.Models;
+using PrsServer5.ViewModel;
 
 namespace PrsServer5.Controllers {
     [Route("api/[controller]")]
@@ -64,20 +65,20 @@ namespace PrsServer5.Controllers {
 
         // GET: api/Vendors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors() {
-            return await _context.Vendors.ToListAsync();
+        public async Task<ActionResult<IEnumerable<VendorView>>> GetVendors() {
+            return await _context.Vendors.Select(v => new VendorView(v)).ToListAsync();
         }
 
         // GET: api/Vendors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Vendor>> GetVendor(int id) {
+        public async Task<ActionResult<VendorView>> GetVendor(int id) {
             var vendor = await _context.Vendors.FindAsync(id);
 
             if(vendor == null) {
                 return NotFound();
             }
 
-            return vendor;
+            return new VendorView(vendor);
         }
 
         // POST: api/vendors/update/5
@@ -142,5 +143,6 @@ namespace PrsServer5.Controllers {
         private bool VendorExists(int id) {
             return _context.Vendors.Any(e => e.Id == id);
         }
+
     }
 }
