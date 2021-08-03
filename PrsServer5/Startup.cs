@@ -59,8 +59,12 @@ namespace PrsServer5 {
                 endpoints.MapControllers();
             });
 
-            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            scope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
+            using var scope = app.ApplicationServices
+                                .GetRequiredService<IServiceScopeFactory>()
+                                .CreateScope();
+            scope.ServiceProvider.GetService<AppDbContext>()
+                                .Database
+                                .Migrate();
 
         }
     }
