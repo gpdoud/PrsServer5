@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PrsServer5.DTO;
+//using PrsServer5.DTO;
 using PrsServer5.Models;
+using PrsServer5.ViewModel;
 
 namespace PrsServer5.Controllers {
     [Route("api/[controller]")]
